@@ -1,8 +1,10 @@
 package com.org.services;
 
+import com.org.Exceptions.UserAlreadyExistsException;
 import com.org.model.User;
 import com.org.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class UserServices {
      * add or update user
      */
     public void addOrUpdateUser(User user) {
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepo.save(user);
     }
 
@@ -47,6 +50,25 @@ public class UserServices {
     {
         User user=userRepo.findById(id).get();
         userRepo.deleteById(id);
+    }
+
+    public User findUserByName(String username)
+    {
+        return userRepo.findByUsername(username).orElse(null);
+    }
+
+
+
+
+    // register user
+    public User registerUser(User user)
+    {
+        if(userRepo.existsByEmail(user.getEmail()))
+        {
+            throw new UserAlreadyExistsException("Email already exists");
+        }
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        return userRepo.save(user);
     }
 
 

@@ -1,5 +1,6 @@
 package com.org.controller;
 
+import com.org.Exceptions.UserAlreadyExistsException;
 import com.org.model.User;
 import com.org.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,23 +8,39 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/flight")
+@RequestMapping("/api/flight/users")
 public class UserController {
 
     @Autowired
     private UserServices userServices;
+    // http://localhost:8080/api/flight/users
     @GetMapping("/users")
     public List<User> getUser() {
         return userServices.getUser();
     }
 
-    @PostMapping("/addUser")
-    public ResponseEntity<String> addUser(@RequestBody User user) {
-        userServices.addOrUpdateUser(user);
-        return ResponseEntity.ok("User added successfully");
+    //http://localhost:8080/api/flight/users/register
+    @PostMapping("/register")
+    public ResponseEntity<?> addUser(@Valid @RequestBody User user)
+    {
+        try{
+            userServices.registerUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "message","User registered successfully","userID",user.getUserId()));
+        }catch (UserAlreadyExistsException e)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error",e.getMessage()));
+
+        }catch (Exception e)
+        {
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error","An Expected error occurred"));
+        }
+
     }
 
     @GetMapping("/users/{id}")

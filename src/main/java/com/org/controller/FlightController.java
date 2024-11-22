@@ -10,11 +10,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/flight")
+@CrossOrigin(origins = "http://localhost:5173")
 public class FlightController {
 
     @Autowired
     private FlightService flightService;
 
+    // http://localhost:8080/api/v1/flight/flights
     @GetMapping("/flights")
     public List<Flight> getAllFlights() {
         return flightService.getAllFlights();

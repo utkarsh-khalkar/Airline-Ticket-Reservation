@@ -27,12 +27,12 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonBackReference // Breaks the circular reference
+    @JsonIgnore// Breaks the circular reference
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "flight_id")
-    @JsonBackReference // Breaks the circular reference
+    @JsonIgnore // Breaks the circular reference
     private Flight flight;
 
 }

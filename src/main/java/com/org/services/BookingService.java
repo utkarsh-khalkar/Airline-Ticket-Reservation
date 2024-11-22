@@ -1,5 +1,8 @@
 package com.org.services;
 
+import com.org.DTO.BookingDTO;
+import com.org.DTO.FlightDTO;
+import com.org.DTO.UserDTO;
 import com.org.Exceptions.DuplicateBookigException;
 import com.org.model.Booking;
 import com.org.model.Flight;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.org.Exceptions.ResourceNotFoundException;
 import com.org.Exceptions.DuplicateBookigException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -24,12 +28,42 @@ public class BookingService {
     @Autowired
     private UserServices userService;
 
+
+
     /*
      * Retrieves all bookings
      */
 
-    public List<Booking> getAllBookings(){
-        return bookingRepo.findAll();
+    public List<BookingDTO> getAllBookings(){
+       List<Booking> bookings=bookingRepo.findAll();
+       return bookings.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public BookingDTO convertToDTO(Booking booking){
+
+        // Map Flight Details
+        FlightDTO flightDTO=new FlightDTO();
+        flightDTO.setFlightId(booking.getFlight().getFlightId());
+        flightDTO.setFlightNumber(booking.getFlight().getFlightNumber());
+        flightDTO.setDeparatureLocation(booking.getFlight().getDeparatureLocation());
+        flightDTO.setDestinationLocation(booking.getFlight().getDestinationLocation());
+        flightDTO.setDepartureTime(booking.getFlight().getDepartureTime());
+        flightDTO.setArrivalTime(booking.getFlight().getArrivalTime());
+
+        // Map user Details
+        UserDTO userDTO=new UserDTO();
+        userDTO.setUserId(booking.getUser().getUserId());
+        userDTO.setUsername(booking.getUser().getUsername());
+        userDTO.setEmail(booking.getUser().getEmail());
+
+        // Map booking Details
+        BookingDTO bookingDTO=new BookingDTO();
+        bookingDTO.setBookingId(booking.getBookingId());
+        bookingDTO.setBookingDate(booking.getBooking_date());
+        bookingDTO.setStatus(booking.getStatus());
+        bookingDTO.setFlight(flightDTO);
+        bookingDTO.setUser(userDTO);
+        return bookingDTO;
     }
 
     /*

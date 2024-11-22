@@ -31,7 +31,7 @@ public class User {
     private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference  // Add this to manage the serialization correctly
+   // @JsonManagedReference  // Add this to manage the serialization correctly
     private List<Booking> bookings = new ArrayList<>();
 
 

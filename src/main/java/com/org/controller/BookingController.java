@@ -1,5 +1,6 @@
 package com.org.controller;
 
+import com.org.DTO.BookingDTO;
 import com.org.Exceptions.DuplicateBookigException;
 import com.org.model.Booking;
 import com.org.services.BookingService;
@@ -20,7 +21,7 @@ public class BookingController {
      */
     //http://localhost:8080/api/v1/bookings/bookings
     @GetMapping("/bookings")
-    public List<Booking> getAllBookings(){
+    public List<BookingDTO> getAllBookings(){
         return bookingService.getAllBookings();
     }
 
